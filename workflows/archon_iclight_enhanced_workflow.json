@@ -1,0 +1,606 @@
+{
+  "last_node_id": 100,
+  "last_link_id": 180,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [50, 50],
+      "size": [315, 314],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [1, 150], "slot_index": 0},
+        {"name": "MASK", "type": "MASK", "links": null, "slot_index": 1}
+      ],
+      "title": "📦 Load Product Image (PNG w/ Alpha)",
+      "properties": {"Node name for S&R": "LoadImage"},
+      "widgets_values": ["product_transparent.png", "image"]
+    },
+    {
+      "id": 2,
+      "type": "LoadImage",
+      "pos": [50, 400],
+      "size": [315, 314],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [3, 151, 160], "slot_index": 0},
+        {"name": "MASK", "type": "MASK", "links": null, "slot_index": 1}
+      ],
+      "title": "🏭 Load Environment/Background",
+      "properties": {"Node name for S&R": "LoadImage"},
+      "widgets_values": ["vehicle_interior.png", "image"]
+    },
+    {
+      "id": 5,
+      "type": "ImageScale",
+      "pos": [50, 750],
+      "size": [315, 130],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {"name": "image", "type": "IMAGE", "link": 1}
+      ],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [10], "slot_index": 0}
+      ],
+      "title": "📐 Scale Product to Fit",
+      "properties": {"Node name for S&R": "ImageScale"},
+      "widgets_values": ["lanczos", 512, 512, "disabled"]
+    },
+    {
+      "id": 6,
+      "type": "ImagePadForOutpaint",
+      "pos": [50, 920],
+      "size": [315, 130],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {"name": "image", "type": "IMAGE", "link": 10}
+      ],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [11], "slot_index": 0},
+        {"name": "MASK", "type": "MASK", "links": [12], "slot_index": 1}
+      ],
+      "title": "📏 Add Canvas Padding",
+      "properties": {"Node name for S&R": "ImagePadForOutpaint"},
+      "widgets_values": [256, 256, 256, 256, 0]
+    },
+    {
+      "id": 10,
+      "type": "CheckpointLoaderSimple",
+      "pos": [450, 50],
+      "size": [315, 98],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "outputs": [
+        {"name": "MODEL", "type": "MODEL", "links": [20], "slot_index": 0},
+        {"name": "CLIP", "type": "CLIP", "links": [21, 22], "slot_index": 1},
+        {"name": "VAE", "type": "VAE", "links": [23, 24, 25], "slot_index": 2}
+      ],
+      "title": "🔧 Load SD 1.5 Model (for IC-Light)",
+      "properties": {"Node name for S&R": "CheckpointLoaderSimple"},
+      "widgets_values": ["realisticVisionV60B1_v60B1VAE.safetensors"]
+    },
+    {
+      "id": 11,
+      "type": "UNETLoader",
+      "pos": [450, 180],
+      "size": [315, 58],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "outputs": [
+        {"name": "MODEL", "type": "MODEL", "links": [30], "slot_index": 0}
+      ],
+      "title": "💡 Load IC-Light Model",
+      "properties": {"Node name for S&R": "UNETLoader"},
+      "widgets_values": ["iclight_sd15_fbc.safetensors"]
+    },
+    {
+      "id": 15,
+      "type": "CLIPTextEncode",
+      "pos": [450, 280],
+      "size": [400, 150],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {"name": "clip", "type": "CLIP", "link": 21}
+      ],
+      "outputs": [
+        {"name": "CONDITIONING", "type": "CONDITIONING", "links": [40], "slot_index": 0}
+      ],
+      "title": "✅ Positive Prompt",
+      "properties": {"Node name for S&R": "CLIPTextEncode"},
+      "widgets_values": ["professional product photography, mounting bracket installed in vehicle, natural lighting matching environment, realistic soft shadows, seamless integration, commercial quality, detailed"]
+    },
+    {
+      "id": 16,
+      "type": "CLIPTextEncode",
+      "pos": [450, 470],
+      "size": [400, 150],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {"name": "clip", "type": "CLIP", "link": 22}
+      ],
+      "outputs": [
+        {"name": "CONDITIONING", "type": "CONDITIONING", "links": [41], "slot_index": 0}
+      ],
+      "title": "❌ Negative Prompt",
+      "properties": {"Node name for S&R": "CLIPTextEncode"},
+      "widgets_values": ["blurry, low quality, distorted, wrong lighting, floating, unrealistic shadows, harsh edges, visible seams, artificial, fake looking"]
+    },
+    {
+      "id": 20,
+      "type": "ImageScale",
+      "pos": [450, 660],
+      "size": [315, 130],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {"name": "image", "type": "IMAGE", "link": 151}
+      ],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [50], "slot_index": 0}
+      ],
+      "title": "📐 Scale Environment to 1024",
+      "properties": {"Node name for S&R": "ImageScale"},
+      "widgets_values": ["lanczos", 1024, 1024, "center"]
+    },
+    {
+      "id": 25,
+      "type": "ICLightConditioning",
+      "pos": [900, 50],
+      "size": [350, 200],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {"name": "positive", "type": "CONDITIONING", "link": 40},
+        {"name": "negative", "type": "CONDITIONING", "link": 41},
+        {"name": "vae", "type": "VAE", "link": 23},
+        {"name": "foreground", "type": "IMAGE", "link": 11},
+        {"name": "multiplier", "type": "FLOAT", "link": null},
+        {"name": "opt_background", "type": "IMAGE", "link": 50}
+      ],
+      "outputs": [
+        {"name": "positive", "type": "CONDITIONING", "links": [60], "slot_index": 0},
+        {"name": "negative", "type": "CONDITIONING", "links": [61], "slot_index": 1},
+        {"name": "empty_latent", "type": "LATENT", "links": [62], "slot_index": 2}
+      ],
+      "title": "💡 IC-Light Conditioning",
+      "properties": {"Node name for S&R": "ICLightConditioning"},
+      "widgets_values": [1.0]
+    },
+    {
+      "id": 30,
+      "type": "ModelSamplingFlux",
+      "pos": [900, 300],
+      "size": [315, 130],
+      "flags": {},
+      "order": 10,
+      "mode": 4,
+      "inputs": [
+        {"name": "model", "type": "MODEL", "link": 30}
+      ],
+      "outputs": [
+        {"name": "MODEL", "type": "MODEL", "links": [70], "slot_index": 0}
+      ],
+      "title": "⚙️ IC-Light Model Patch",
+      "properties": {"Node name for S&R": "ModelSamplingFlux"},
+      "widgets_values": [1.15, 0.5, 1024, 1024]
+    },
+    {
+      "id": 35,
+      "type": "KSampler",
+      "pos": [900, 470],
+      "size": [315, 262],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {"name": "model", "type": "MODEL", "link": 70},
+        {"name": "positive", "type": "CONDITIONING", "link": 60},
+        {"name": "negative", "type": "CONDITIONING", "link": 61},
+        {"name": "latent_image", "type": "LATENT", "link": 62}
+      ],
+      "outputs": [
+        {"name": "LATENT", "type": "LATENT", "links": [80], "slot_index": 0}
+      ],
+      "title": "🎨 IC-Light Sampler",
+      "properties": {"Node name for S&R": "KSampler"},
+      "widgets_values": [12345678, "randomize", 25, 2.0, "euler", "normal", 1.0]
+    },
+    {
+      "id": 36,
+      "type": "VAEDecode",
+      "pos": [900, 770],
+      "size": [210, 46],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {"name": "samples", "type": "LATENT", "link": 80},
+        {"name": "vae", "type": "VAE", "link": 24}
+      ],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [81, 170], "slot_index": 0}
+      ],
+      "title": "📤 VAE Decode Relit Product",
+      "properties": {"Node name for S&R": "VAEDecode"}
+    },
+    {
+      "id": 40,
+      "type": "ColorBlend",
+      "pos": [1300, 50],
+      "size": [315, 150],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {"name": "image_a", "type": "IMAGE", "link": 150},
+        {"name": "image_b", "type": "IMAGE", "link": 81}
+      ],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [90], "slot_index": 0}
+      ],
+      "title": "🎨 Restore Original Colors",
+      "properties": {"Node name for S&R": "ColorBlend"},
+      "widgets_values": ["luminosity", 0.7]
+    },
+    {
+      "id": 45,
+      "type": "ImageCompositeMasked",
+      "pos": [1300, 250],
+      "size": [315, 146],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {"name": "destination", "type": "IMAGE", "link": 160},
+        {"name": "source", "type": "IMAGE", "link": 90},
+        {"name": "mask", "type": "MASK", "link": 12}
+      ],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [100], "slot_index": 0}
+      ],
+      "title": "🔗 Composite into Environment",
+      "properties": {"Node name for S&R": "ImageCompositeMasked"},
+      "widgets_values": [256, 256, false]
+    },
+    {
+      "id": 50,
+      "type": "CheckpointLoaderSimple",
+      "pos": [1300, 450],
+      "size": [315, 98],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "outputs": [
+        {"name": "MODEL", "type": "MODEL", "links": [110], "slot_index": 0},
+        {"name": "CLIP", "type": "CLIP", "links": [111, 112], "slot_index": 1},
+        {"name": "VAE", "type": "VAE", "links": [113, 114], "slot_index": 2}
+      ],
+      "title": "🔧 Load SDXL for Refinement",
+      "properties": {"Node name for S&R": "CheckpointLoaderSimple"},
+      "widgets_values": ["juggernautXL_v9.safetensors"]
+    },
+    {
+      "id": 51,
+      "type": "CLIPTextEncode",
+      "pos": [1300, 580],
+      "size": [350, 100],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {"name": "clip", "type": "CLIP", "link": 111}
+      ],
+      "outputs": [
+        {"name": "CONDITIONING", "type": "CONDITIONING", "links": [120], "slot_index": 0}
+      ],
+      "title": "✅ Refinement Positive",
+      "properties": {"Node name for S&R": "CLIPTextEncode"},
+      "widgets_values": ["professional product photography, high detail, commercial quality, 8k, photorealistic, perfect integration"]
+    },
+    {
+      "id": 52,
+      "type": "CLIPTextEncode",
+      "pos": [1300, 710],
+      "size": [350, 100],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {"name": "clip", "type": "CLIP", "link": 112}
+      ],
+      "outputs": [
+        {"name": "CONDITIONING", "type": "CONDITIONING", "links": [121], "slot_index": 0}
+      ],
+      "title": "❌ Refinement Negative",
+      "properties": {"Node name for S&R": "CLIPTextEncode"},
+      "widgets_values": ["blurry, low quality, artifacts, seams, unrealistic"]
+    },
+    {
+      "id": 55,
+      "type": "ImageScale",
+      "pos": [1700, 50],
+      "size": [315, 130],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {"name": "image", "type": "IMAGE", "link": 100}
+      ],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [130], "slot_index": 0}
+      ],
+      "title": "📐 Scale to SDXL Resolution",
+      "properties": {"Node name for S&R": "ImageScale"},
+      "widgets_values": ["lanczos", 1536, 1024, "disabled"]
+    },
+    {
+      "id": 56,
+      "type": "VAEEncode",
+      "pos": [1700, 220],
+      "size": [210, 46],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {"name": "pixels", "type": "IMAGE", "link": 130},
+        {"name": "vae", "type": "VAE", "link": 113}
+      ],
+      "outputs": [
+        {"name": "LATENT", "type": "LATENT", "links": [131], "slot_index": 0}
+      ],
+      "title": "📥 VAE Encode",
+      "properties": {"Node name for S&R": "VAEEncode"}
+    },
+    {
+      "id": 60,
+      "type": "KSampler",
+      "pos": [1700, 300],
+      "size": [315, 262],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {"name": "model", "type": "MODEL", "link": 110},
+        {"name": "positive", "type": "CONDITIONING", "link": 120},
+        {"name": "negative", "type": "CONDITIONING", "link": 121},
+        {"name": "latent_image", "type": "LATENT", "link": 131}
+      ],
+      "outputs": [
+        {"name": "LATENT", "type": "LATENT", "links": [140], "slot_index": 0}
+      ],
+      "title": "🎨 Refinement Sampler",
+      "properties": {"Node name for S&R": "KSampler"},
+      "widgets_values": [87654321, "randomize", 15, 6.5, "dpmpp_2m_sde", "karras", 0.25]
+    },
+    {
+      "id": 61,
+      "type": "VAEDecode",
+      "pos": [1700, 600],
+      "size": [210, 46],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {"name": "samples", "type": "LATENT", "link": 140},
+        {"name": "vae", "type": "VAE", "link": 114}
+      ],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [141], "slot_index": 0}
+      ],
+      "title": "📤 VAE Decode Refined",
+      "properties": {"Node name for S&R": "VAEDecode"}
+    },
+    {
+      "id": 70,
+      "type": "UpscaleModelLoader",
+      "pos": [2100, 50],
+      "size": [315, 58],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "outputs": [
+        {"name": "UPSCALE_MODEL", "type": "UPSCALE_MODEL", "links": [150], "slot_index": 0}
+      ],
+      "title": "📈 Load 4x Upscaler",
+      "properties": {"Node name for S&R": "UpscaleModelLoader"},
+      "widgets_values": ["4x-UltraSharp.pth"]
+    },
+    {
+      "id": 71,
+      "type": "ImageUpscaleWithModel",
+      "pos": [2100, 140],
+      "size": [315, 46],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {"name": "upscale_model", "type": "UPSCALE_MODEL", "link": 150},
+        {"name": "image", "type": "IMAGE", "link": 141}
+      ],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [151], "slot_index": 0}
+      ],
+      "title": "🔍 4x Upscale",
+      "properties": {"Node name for S&R": "ImageUpscaleWithModel"}
+    },
+    {
+      "id": 72,
+      "type": "ImageScale",
+      "pos": [2100, 220],
+      "size": [315, 130],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {"name": "image", "type": "IMAGE", "link": 151}
+      ],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [160], "slot_index": 0}
+      ],
+      "title": "📐 Scale to Marketing Resolution",
+      "properties": {"Node name for S&R": "ImageScale"},
+      "widgets_values": ["lanczos", 4096, 2732, "disabled"]
+    },
+    {
+      "id": 73,
+      "type": "ImageSharpen",
+      "pos": [2100, 380],
+      "size": [315, 106],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {"name": "image", "type": "IMAGE", "link": 160}
+      ],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [170], "slot_index": 0}
+      ],
+      "title": "✨ Final Sharpening",
+      "properties": {"Node name for S&R": "ImageSharpen"},
+      "widgets_values": [1, 0.4, 1]
+    },
+    {
+      "id": 80,
+      "type": "SaveImage",
+      "pos": [2100, 520],
+      "size": [315, 270],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {"name": "images", "type": "IMAGE", "link": 170}
+      ],
+      "title": "💾 Save Final Marketing Image",
+      "properties": {"Node name for S&R": "SaveImage"},
+      "widgets_values": ["Archon_ICLight_Composite"]
+    },
+    {
+      "id": 85,
+      "type": "PreviewImage",
+      "pos": [1700, 680],
+      "size": [315, 246],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {"name": "images", "type": "IMAGE", "link": 141}
+      ],
+      "title": "👁️ Preview Refined",
+      "properties": {"Node name for S&R": "PreviewImage"}
+    },
+    {
+      "id": 86,
+      "type": "PreviewImage",
+      "pos": [1150, 770],
+      "size": [315, 246],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {"name": "images", "type": "IMAGE", "link": 170}
+      ],
+      "title": "👁️ Preview IC-Light Output",
+      "properties": {"Node name for S&R": "PreviewImage"}
+    }
+  ],
+  "links": [
+    [1, 1, 0, 5, 0, "IMAGE"],
+    [3, 2, 0, 20, 0, "IMAGE"],
+    [10, 5, 0, 6, 0, "IMAGE"],
+    [11, 6, 0, 25, 3, "IMAGE"],
+    [12, 6, 1, 45, 2, "MASK"],
+    [20, 10, 0, 30, 0, "MODEL"],
+    [21, 10, 1, 15, 0, "CLIP"],
+    [22, 10, 1, 16, 0, "CLIP"],
+    [23, 10, 2, 25, 2, "VAE"],
+    [24, 10, 2, 36, 1, "VAE"],
+    [25, 10, 2, 56, 1, "VAE"],
+    [30, 11, 0, 30, 0, "MODEL"],
+    [40, 15, 0, 25, 0, "CONDITIONING"],
+    [41, 16, 0, 25, 1, "CONDITIONING"],
+    [50, 20, 0, 25, 5, "IMAGE"],
+    [60, 25, 0, 35, 1, "CONDITIONING"],
+    [61, 25, 1, 35, 2, "CONDITIONING"],
+    [62, 25, 2, 35, 3, "LATENT"],
+    [70, 30, 0, 35, 0, "MODEL"],
+    [80, 35, 0, 36, 0, "LATENT"],
+    [81, 36, 0, 40, 1, "IMAGE"],
+    [90, 40, 0, 45, 1, "IMAGE"],
+    [100, 45, 0, 55, 0, "IMAGE"],
+    [110, 50, 0, 60, 0, "MODEL"],
+    [111, 50, 1, 51, 0, "CLIP"],
+    [112, 50, 1, 52, 0, "CLIP"],
+    [113, 50, 2, 56, 1, "VAE"],
+    [114, 50, 2, 61, 1, "VAE"],
+    [120, 51, 0, 60, 1, "CONDITIONING"],
+    [121, 52, 0, 60, 2, "CONDITIONING"],
+    [130, 55, 0, 56, 0, "IMAGE"],
+    [131, 56, 0, 60, 3, "LATENT"],
+    [140, 60, 0, 61, 0, "LATENT"],
+    [141, 61, 0, 71, 1, "IMAGE"],
+    [150, 70, 0, 71, 0, "UPSCALE_MODEL"],
+    [151, 71, 0, 72, 0, "IMAGE"],
+    [160, 72, 0, 73, 0, "IMAGE"],
+    [150, 1, 0, 40, 0, "IMAGE"],
+    [151, 2, 0, 20, 0, "IMAGE"],
+    [160, 2, 0, 45, 0, "IMAGE"],
+    [170, 73, 0, 80, 0, "IMAGE"],
+    [170, 36, 0, 86, 0, "IMAGE"]
+  ],
+  "groups": [
+    {
+      "title": "📥 INPUT & PRODUCT PREP",
+      "bounding": [30, 0, 400, 1100],
+      "color": "#3f789e"
+    },
+    {
+      "title": "🔧 SD1.5 MODEL & IC-LIGHT SETUP",
+      "bounding": [430, 0, 450, 850],
+      "color": "#8A8A8A"
+    },
+    {
+      "title": "💡 IC-LIGHT RELIGHTING",
+      "bounding": [880, 0, 400, 900],
+      "color": "#a1a463"
+    },
+    {
+      "title": "🎨 COLOR RESTORE & COMPOSITE",
+      "bounding": [1280, 0, 400, 900],
+      "color": "#b58b4c"
+    },
+    {
+      "title": "✨ SDXL REFINEMENT",
+      "bounding": [1680, 0, 400, 1000],
+      "color": "#6e5a3a"
+    },
+    {
+      "title": "📤 UPSCALE & OUTPUT",
+      "bounding": [2080, 0, 400, 850],
+      "color": "#2b3a6e"
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.45,
+      "offset": [0, 0]
+    }
+  },
+  "version": 0.4
+}
