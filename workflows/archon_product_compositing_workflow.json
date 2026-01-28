@@ -120,9 +120,9 @@
     },
     {
       "id": 11,
-      "type": "DepthAnythingV2Preprocessor",
+      "type": "MiDaS-DepthMapPreprocessor",
       "pos": [450, 650],
-      "size": [315, 82],
+      "size": [315, 106],
       "flags": {},
       "order": 7,
       "mode": 0,
@@ -132,9 +132,9 @@
       "outputs": [
         {"name": "IMAGE", "type": "IMAGE", "links": [21], "slot_index": 0}
       ],
-      "title": "🔍 Depth Map Extractor",
-      "properties": {"Node name for S&R": "DepthAnythingV2Preprocessor"},
-      "widgets_values": ["vitl", 1024]
+      "title": "🔍 Depth Map Extractor (MiDaS)",
+      "properties": {"Node name for S&R": "MiDaS-DepthMapPreprocessor"},
+      "widgets_values": [6.283185307179586, 0.1, 1024]
     },
     {
       "id": 12,
